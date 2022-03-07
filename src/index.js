@@ -1,8 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Link, Route, Switch, Routes, BrowserRouter } from 'react-router-dom';
+import LoginPageComp from './components/LoginPageComp'
+import CreateAccountComp from './components/CreateAccountComp'
+import MainPageComp from './components/MainPageComp'
+import ManageUsersPageComp from './components/ManageUsersPageComp'
+import UsersPageComp from './components/UserPageComp'
+import EditUserPageComp from './components/EditUserPageComp'
+import WelcomePageComp from './components/WelcomePageComp'
+
 
 ReactDOM.render(
   <React.StrictMode>

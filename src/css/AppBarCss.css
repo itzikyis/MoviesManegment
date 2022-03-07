@@ -1,0 +1,14 @@
+.logo {
+    margin: "auto";
+    text-align: "center";
+    margin-left: 4%;
+    max-width: "50%";
+    max-height: "70%";
+}
+
+.logoHorizontallyCenter {
+    position: "absolute";
+    left: "50%";
+    top: "50%";
+    transform: "translate(-50%, -50%)";
+}

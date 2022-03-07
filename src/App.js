@@ -1,23 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import LoginPageComp from './components/LoginPageComp'
+import CreateAccountComp from './components/CreateAccountComp'
+import MainPageComp from './components/MainPageComp'
+import ManageUsersPageComp from './components/ManageUsersPageComp'
+import UsersPageComp from './components/UserPageComp'
+import EditUserPageComp from './components/EditUserPageComp'
+import WelcomePageComp from './components/WelcomePageComp'
+import AppBarComp from './components/AppBarComp'
+import { Link, Route, Switch, Routes, BrowserRouter } from 'react-router-dom';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <AppBarComp />
+        <br />
+        <Routes>
+          <Route path='/' element={<WelcomePageComp />} />
+          <Route path='/home' element={<WelcomePageComp />} />
+          <Route path='/login' element={<LoginPageComp />} />
+          <Route path='/signup' element={<CreateAccountComp />} />
+          <Route path='/main' element={<MainPageComp />} />
+          <Route path='/users' element={<UsersPageComp />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
