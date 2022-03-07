@@ -16,12 +16,12 @@ function App() {
         <AppBarComp />
         <br />
         <Routes>
-          <Route path='/' element={<WelcomePageComp />} />
-          <Route path='/home' element={<WelcomePageComp />} />
-          <Route path='/login' element={<LoginPageComp />} />
-          <Route path='/signup' element={<CreateAccountComp />} />
-          <Route path='/main' element={<MainPageComp />} />
-          <Route path='/users' element={<UsersPageComp />} />
+          <Route path='MoviesManegment/' element={<WelcomePageComp />} />
+          <Route path='MoviesManegment/home' element={<WelcomePageComp />} />
+          <Route path='MoviesManegment/login' element={<LoginPageComp />} />
+          <Route path='MoviesManegment/signup' element={<CreateAccountComp />} />
+          <Route path='MoviesManegment/main' element={<MainPageComp />} />
+          <Route path='MoviesManegment/users' element={<UsersPageComp />} />
         </Routes>
       </BrowserRouter>
     </div>
