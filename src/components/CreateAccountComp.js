@@ -1,26 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import firebaseDb from '../firebase';
 import { Link, Route, Switch } from 'react-router-dom';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { useNavigate  } from 'react-router-dom';
-
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Box, Grid, TextField, Button, Avatar, Typography, Container } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { getDatabase, ref, set } from "firebase/database";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { ReactSession } from 'react-client-session';
 
 
 function Copyright() {
@@ -47,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     },
     form: {
         width: '100%',
-        marginTop: theme.spacing(3),
+        marginTop: theme.spacing(1),
     },
     submit: {
         margin: theme.spacing(3, 0, 2),
@@ -59,6 +49,8 @@ function CreateAccountComp() {
 
     let navigate = useNavigate();
     const [email, setEmail] = useState();
+    const [firstName, setFirstName] = useState();
+    const [lastName, setLastName] = useState();
     const [password, setPassword] = useState();
     const [open, setOpen] = useState(false);
     const [errorCode, setErrorCode] = useState();
@@ -74,16 +66,58 @@ function CreateAccountComp() {
     const handleSubmit = e => {
         e.preventDefault();
 
-        firebaseDb.auth().createUserWithEmailAndPassword(email, password)
+        const auth = getAuth(firebaseDb);
+
+        createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 var user = userCredential.user;
                 console.log(user);
-                navigate.push("/main");
+
+
+                ReactSession.set("username", user.email.split('@')[0]);
+
+                const db = getDatabase(firebaseDb);
+
+                set(ref(db, 'users/' + user.uid), {
+                    firstName: firstName,
+                    lastName: lastName,
+                    userName: user.email,
+                    createDate: Date.now(),
+                    sessionTimeOut: 20
+                })
+                    .then(() => {
+                        // Data saved successfully!
+                        console.log("Data saved successfully!");
+                    })
+                    .catch((error2) => {
+                        // The write failed...
+                        console.log("The write failed");
+                    });
+
+                set(ref(db, 'permissions/' + user.uid), {
+                    createMovies: 0,
+                    createSubscriptions: 0,
+                    deleteMovies: 0,
+                    deleteSubscriptions: 0,
+                    viewMovies: 1,
+                    viewSubscriptions: 1
+                })
+                    .then(() => {
+                        // Data saved successfully!
+                        console.log("Data saved successfully!");
+                    })
+                    .catch((error2) => {
+                        // The write failed...
+                        console.log("The write failed");
+                    });
+
+                navigate("../MoviesManagement/main", { replace: true });
                 // route.Link('/main');//this.props.history.push('/main')
                 // ...
             })
             .catch((error) => {
+                console.log(error);
                 var errorCode = error.code;
                 var errorMessage = error.message;
                 var errorStr = 'Try Again!';
@@ -120,35 +154,53 @@ function CreateAccountComp() {
                 </Avatar>
                 <Typography component="h1" variant="h5">
                     Sign up
-        </Typography>
-                <form className={classes.form} noValidate onSubmit={handleSubmit}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email Address"
-                                name="email"
-                                autoComplete="email"
-                                onChange={(e) => { setEmail(e.target.value) }}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                onChange={(e) => { setPassword(e.target.value) }}
-                            />
-                        </Grid>
-                    </Grid>
+                </Typography>
+                <form className={classes.form} onSubmit={handleSubmit}>
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        onChange={(e) => { setEmail(e.target.value) }}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="firstName"
+                        label="First Name"
+                        name="firstName"
+                        autoComplete="firstName"
+                        onChange={(e) => { setFirstName(e.target.value) }}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="lastName"
+                        label="Last Name"
+                        name="lastName"
+                        autoComplete="lastName"
+                        onChange={(e) => { setLastName(e.target.value) }}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        onChange={(e) => { setPassword(e.target.value) }}
+                    />
                     <Button
                         type="submit"
                         fullWidth
@@ -157,12 +209,12 @@ function CreateAccountComp() {
                         className={classes.submit}
                     >
                         Sign Up
-          </Button>
+                    </Button>
                     <Grid container justify="flex-end">
                         <Grid item>
-                            <Link to="/login" variant="body2">
+                            <Link to="/MoviesManagement/login" variant="body2">
                                 Already have an account? Sign in
-              </Link>
+                            </Link>
                         </Grid>
                     </Grid>
                 </form>
@@ -171,7 +223,7 @@ function CreateAccountComp() {
                 <Copyright />
             </Box>
 
-            
+
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -187,7 +239,7 @@ function CreateAccountComp() {
                 <DialogActions>
                     <Button onClick={handleClose} color="primary" autoFocus>
                         Ok
-              </Button>
+                    </Button>
                 </DialogActions>
             </Dialog>
 

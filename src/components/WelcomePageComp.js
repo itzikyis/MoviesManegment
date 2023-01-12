@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import '../css/WelcomePage.css';
-import LoginPageComp from './LoginPageComp'
-import CreateAccountComp from './CreateAccountComp'
-import MainPageComp from './MainPageComp'
-import ManageUsersPageComp from './ManageUsersPageComp'
-import UsersPageComp from './UserPageComp'
-import EditUserPageComp from './EditUserPageComp'
-import AppBarComp from './AppBarComp'
 import { Link, Route, Switch } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
